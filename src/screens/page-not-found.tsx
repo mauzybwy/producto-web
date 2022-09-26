@@ -1,18 +1,18 @@
 /*****************************************************************************
  * Import
  *****************************************************************************/
-import ProductoRouter from "./navigation/router";
-import { ThemeProvider } from "@mui/material/styles";
-import { theme } from "style/theme";
+import React from "react";
+import { Box, Typography } from "@mui/material";
 
 /*****************************************************************************
- * App
+ * Default Component
  *****************************************************************************/
-
-export default function App() {
+export default function PageNotFound () {
   return (
-    <ThemeProvider theme={theme}>
-      <ProductoRouter />
-    </ThemeProvider>
+    <Box width="100vw" height="100vh" display="flex" justifyContent="center" alignItems="center">
+      <Typography>
+        what's someone like you doing in a place like this?
+      </Typography>
+    </Box>
   );
 }
