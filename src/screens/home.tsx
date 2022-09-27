@@ -24,12 +24,17 @@ export default function ProductoHome () {
   const totalTime = timers.reduce((accum, timer) => accum + timer.runtime, 0);
   const activeTimer = timers.find(timer => timer.id === activeTimerId);
 
-  const handleClickTimer = (timer: Timer) => {
+  const handleClickTimer = async (timer: Timer) => {
     updateActiveTimer();
 
     updateActivity({
       ...activity,
       timer: timer.id === activeTimerId ? null : timer.id,
+    });
+
+    const url = `https://joinjoaomgcd.appspot.com/_ah/api/messaging/v1/sendPush?apikey=d002d9f577024aa8841db563c35cfc89&deviceId=f928bcf493074fe6ab3859920c587cfb&text=${timer.id === activeTimerId ? "un" : ""}block_apps`
+    await fetch(url, {
+      method: "GET",
     });
   }
 
