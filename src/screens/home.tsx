@@ -3,7 +3,6 @@
  *****************************************************************************/
 import { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
-import { useStopwatch } from "react-use-precision-timer";
 
 import { DefaultColors } from "style/colors";
 import { Timer } from "models/timer";
@@ -20,47 +19,31 @@ export default function ProductoHome () {
 
   const [activeTimerId, setActiveTimerId] = useState(null);
 
-  const stopwatch = useStopwatch();
   const totalTime = timers.reduce((accum, timer) => accum + timer.runtime, 0);
   const activeTimer = timers.find(timer => timer.id === activeTimerId);
 
   const handleClickTimer = (timer: Timer) => {
-    /* updateActiveTimer(); */
+    updateActiveTimer();
 
-    if (timer.id === activeTimerId) {
-      /* stopwatch.pause(); */
-      updateActivity({
-        ...activity,
-        timer: null,
-      });
-    } else {
-      /* stopwatch.start(); */
-      updateActivity({
-        ...activity,
-        timer: timer.id,
-      });
-    }
+    updateActivity({
+      ...activity,
+      timer: timer.id === activeTimerId ? null : timer.id,
+    });
   }
 
   useEffect(() => {
     if (activity) {
-      updateActiveTimer();
-      
-      if (activity.timer) {
-        stopwatch.start();
-      } else {
-        stopwatch.pause();
-      }
+      /* updateActiveTimer(); */
       setActiveTimerId(activity.timer);
     }
   }, [activity])
 
   const updateActiveTimer = () => {
     if (activeTimer) {
-      const newTime = stopwatch.getElapsedRunningTime() / 1000 + (activeTimer.runtime || 0);
+      const diff = (Date.now() / 1000) - activity.timeUpdated.seconds;
       updateTimer(activeTimer, {
         ...activeTimer,
-        runtime: Math.trunc(newTime),
+        runtime: activeTimer.runtime + Math.trunc(diff),
       });
     }
   }
@@ -83,7 +66,6 @@ export default function ProductoHome () {
         <Stopwatch
           active
           size="xl"
-          stopwatch={stopwatch}
           offset={totalTime}
         />
         <Box display="flex" style={{ gap: "16px" }}>
@@ -94,7 +76,6 @@ export default function ProductoHome () {
               neutral={activeTimerId === null}
               active={activeTimerId === timer.id}
               onClick={() => handleClickTimer(timer)}
-              stopwatch={stopwatch}
             />
           ))}
         </Box>
@@ -109,16 +90,15 @@ export default function ProductoHome () {
 
 const Stopwatch = ({
   size,
-  stopwatch,
   offset,
   active,
 }: {
   size?: "sm"|"md"|"lg"|"xl",
-  stopwatch: any,
   offset: number,
   active?: boolean,
 }) => {
   const [forceRender, setForceRender] = useState(false);
+  const { activity } = useActivity();
 
   const variant = {
     "sm": "h6",
@@ -138,8 +118,9 @@ const Stopwatch = ({
   })
 
   let runtime = offset;
-  if (active && stopwatch.isRunning()) {
-    runtime += stopwatch.getElapsedRunningTime() / 1000;
+  if (active && activity?.timer) {
+    const diff = (Date.now() / 1000) - activity.timeUpdated.seconds;
+    runtime += diff;
   }
   
   return (
@@ -157,13 +138,11 @@ const TimerButton = ({
   neutral,
   active,
   onClick,
-  stopwatch,
 } : {
   timer: Timer
   neutral: boolean,
   active: boolean,
   onClick: any,
-  stopwatch: any
 }) => {
   return (
     <Box
@@ -191,7 +170,6 @@ const TimerButton = ({
       </Box>
       <Stopwatch
         size="sm"
-        stopwatch={stopwatch}
         offset={timer.runtime}
         active={active}
       />
