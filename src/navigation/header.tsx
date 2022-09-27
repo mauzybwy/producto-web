@@ -51,13 +51,16 @@ const Logo = () => {
       onClick={() => navigate("/")}
       className="interact"
     >
-      <Typography style={{
-        fontSize: "46px",
-        lineHeight: "0px",
-        paddingTop: "13px",
-        paddingLeft: "5px",
-        //color: DefaultColors.light,
-      }}>
+      <Typography
+        className="disable-select"
+        style={{
+          fontSize: "46px",
+          lineHeight: "0px",
+          paddingTop: "13px",
+          paddingLeft: "5px",
+          //color: DefaultColors.light,
+        }}
+      >
         producto
       </Typography>
     </Box>

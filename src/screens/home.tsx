@@ -143,7 +143,7 @@ const Stopwatch = ({
   
   return (
     //@ts-ignore
-    <Typography variant={variant}>
+    <Typography className="disable-select" variant={variant}>
       {toTimestring(runtime)}
     </Typography>
   );
