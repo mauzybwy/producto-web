@@ -43,7 +43,7 @@ export default function ProductoHome () {
       active: false,
     },
     {
-      name: "poop",
+      name: "butts",
       runtime: 0,
       active: false,
     },
@@ -52,11 +52,11 @@ export default function ProductoHome () {
   const stopwatch = useStopwatch();
   const selectedTimer = timers[selectedTimerIdx];
   const activeTimerIdx = timers.reduce((accum, timer, idx) => {
-      if (accum === null && timer.active) {
-        return idx;
-      } else {
-        return accum;
-      }
+    if (accum === null && timer.active) {
+      return idx;
+    } else {
+      return accum;
+    }
   }, null) as number;
   const activeTimer = timers[activeTimerIdx];
 
@@ -138,6 +138,11 @@ export default function ProductoHome () {
         alignItems="center"
         style={{ gap: "32px" }}
       >
+        <Player
+          timer={selectedTimer}
+          onPlayPause={handlePlayPause}
+          stopwatch={stopwatch}
+        />
         <Box display="flex" style={{ gap: "16px" }}>
           {timers.map((timer, idx) => (
             <TimerButton
@@ -149,11 +154,6 @@ export default function ProductoHome () {
             />
           ))}
         </Box>
-        <Player
-          timer={selectedTimer}
-          onPlayPause={handlePlayPause}
-          stopwatch={stopwatch}
-        />
       </Box>
     </Box>
   );
@@ -220,19 +220,24 @@ const TimerButton = ({
   onClick: any,
 }) => {
   return (
-    <Box
-      p="16px"
-      display="flex"
-      onClick={onClick}
-      sx={{
-        border: "2px solid",
-        borderColor: timer.active ? DefaultColors.accent : DefaultColors.text,
-        opacity: selected || neutral || timer.active ? "100%" : "40%",
-      }}
-      className="interact"
-    >
-      <Typography variant="h5">
-        {timer.name}
+    <Box display="flex" flexDirection="column" alignItems="center" style={{ gap: "8px" }}>
+      <Box
+        p="16px"
+        display="flex"
+        onClick={onClick}
+        sx={{
+          border: "2px solid",
+          borderColor: timer.active ? DefaultColors.accent : DefaultColors.text,
+          opacity: selected || neutral || timer.active ? "100%" : "40%",
+        }}
+        className="interact"
+      >
+        <Typography variant="h5">
+          {timer.name}
+        </Typography>
+      </Box>
+      <Typography variant="h6">
+        {toTimestring(timer.runtime)}
       </Typography>
     </Box>
   )
