@@ -9,11 +9,13 @@ import { Timer } from "models/timer";
 import { toTimestring } from "utils/strutils";
 import { useActivity } from "hooks/activity";
 import { useTimers } from "hooks/timers";
+import { useMobileCheck } from "hooks/mobile";
 
 /*****************************************************************************
  * Default Component
  *****************************************************************************/
 export default function ProductoHome () {
+  const isMobile = useMobileCheck();
   const { activity, updateActivity } = useActivity();
   const { timers, updateTimer } = useTimers();
 
@@ -50,8 +52,9 @@ export default function ProductoHome () {
   
   return (
     <Box
-      width="100vw"
-      height="100vh"
+      pt={isMobile ? "96px" : undefined}
+      width={isMobile ? "100%" : "100vw"}
+      height={isMobile ? "100%" : "100vh"}
       display="flex"
       justifyContent="center"
       alignItems="center"
@@ -61,14 +64,23 @@ export default function ProductoHome () {
         flexDirection="column"
         justifyContent="center"
         alignItems="center"
-        style={{ gap: "32px" }}
+        style={{
+          gap: "32px",
+        }}
       >
         <Stopwatch
           active
-          size="xl"
+          size={isMobile ? "lg" : "xl"}
           offset={totalTime}
         />
-        <Box display="flex" style={{ gap: "16px" }}>
+        <Box
+          display="flex"
+          px={isMobile ? "16px" : "0px"}
+          style={{
+            gap: isMobile ? "32px" : "16px",
+            flexWrap: isMobile ? "wrap" : "nowrap",
+          }}
+        >
           {timers.map((timer, idx) => (
             <TimerButton
               key={timer.name}
@@ -76,6 +88,7 @@ export default function ProductoHome () {
               neutral={activeTimerId === null}
               active={activeTimerId === timer.id}
               onClick={() => handleClickTimer(timer)}
+              style={{ width: isMobile ? "100%" : undefined }}
             />
           ))}
         </Box>
@@ -138,24 +151,30 @@ const TimerButton = ({
   neutral,
   active,
   onClick,
+  style,
 } : {
   timer: Timer
   neutral: boolean,
   active: boolean,
   onClick: any,
+  style?: any,
 }) => {
+  const isMobile = useMobileCheck();
+  
   return (
     <Box
       display="flex"
-      flexDirection="column"
+      flexDirection={isMobile ? "row" : "column"}
       alignItems="center"
+      justifyContent={isMobile ? "space-between" : undefined}
       style={{
         gap: "8px",
         opacity: neutral || active ? "100%" : "40%",
+        ...style,
       }}
     >
       <Box
-        p="16px"
+        p={isMobile ? "8px" : "16px"}
         display="flex"
         onClick={onClick}
         sx={{
@@ -164,7 +183,7 @@ const TimerButton = ({
         }}
         className="interact"
       >
-        <Typography variant="h5">
+        <Typography className="disable-select" variant="h5">
           {timer.name}
         </Typography>
       </Box>
