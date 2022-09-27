@@ -43,7 +43,7 @@ export default function ProductoHome () {
       active: false,
     },
     {
-      name: "butthole",
+      name: "poop",
       runtime: 0,
       active: false,
     },
