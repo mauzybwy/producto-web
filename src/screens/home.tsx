@@ -59,9 +59,15 @@ export default function ProductoHome () {
     }
   }, null) as number;
   const activeTimer = timers[activeTimerIdx];
+  const totalTime = timers.reduce((accum, timer) => accum + timer.runtime, 0);
 
   const handleClickTimer = (idx) => {
-    setSelectedTimerIdx(selectedTimerIdx === idx ? activeTimerIdx : idx);
+    /* setSelectedTimerIdx(selectedTimerIdx === idx ? activeTimerIdx : idx); */
+    if (selectedTimerIdx === idx) {
+      /* updateActiveTimer(); */
+    }
+    handlePlayPauseIdx(idx);
+    setSelectedTimerIdx(selectedTimerIdx === idx ? null : idx);
   }
 
   const playPauseStopwatch = () => {
@@ -92,6 +98,34 @@ export default function ProductoHome () {
     }
   }
 
+  useEffect(() => {
+    //handlePlayPause();
+  }, [selectedTimerIdx])
+
+  const handlePlayPauseIdx = (index) => {
+    let copy = [...timers];
+    for (var idx = 0; idx < copy.length; idx++) {
+      let timer = copy[idx];
+      let active = false;
+
+      if (idx === index) {
+        if (timer.active) {
+          active = playPauseStopwatch();
+          const newTime = stopwatch.getElapsedRunningTime() / 1000 + (timer.runtime || 0);
+          handleRuntimeChange(idx, newTime);
+        } else {
+          stopwatch.start();
+          updateActiveTimer();
+          active = true;
+        }
+      }
+
+      timer.active = active;
+    }
+
+    setTimers(copy);
+  }
+
   const handlePlayPause = () => {
     let copy = [...timers];
     for (var idx = 0; idx < copy.length; idx++) {
@@ -118,7 +152,7 @@ export default function ProductoHome () {
 
   const handleRuntimeChange = (idx, time) => {
     let copy = [...timers];
-    copy[idx].runtime = time
+    copy[idx].runtime = Math.trunc(time);
 
     setTimers(copy);
   }
@@ -142,6 +176,7 @@ export default function ProductoHome () {
           timer={selectedTimer}
           onPlayPause={handlePlayPause}
           stopwatch={stopwatch}
+          totalTime={totalTime}
         />
         <Box display="flex" style={{ gap: "16px" }}>
           {timers.map((timer, idx) => (
@@ -151,6 +186,7 @@ export default function ProductoHome () {
               selected={selectedTimerIdx === idx}
               neutral={selectedTimerIdx === null}
               onClick={() => handleClickTimer(idx)}
+              stopwatch={stopwatch}
             />
           ))}
         </Box>
@@ -167,14 +203,14 @@ const Player = ({
   timer,
   onPlayPause,
   stopwatch,
+  totalTime,
 }: {
   timer: Timer,
   onPlayPause: any,
   stopwatch: any,
+  totalTime: number
 }) => {
   const [forceRender, setForceRender] = useState(false);
-  
-  const PlayerButton = timer?.active ? PlayerPause : PlayerPlay;
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -186,22 +222,30 @@ const Player = ({
     };
   })
 
-  const elapsedTime = stopwatch.getElapsedRunningTime() / 1000 + (timer?.runtime || 0);
-
+  const PlayerButton = timer?.active ? PlayerPause : PlayerPlay;
+  /* const elapsedTime = stopwatch.getElapsedRunningTime() / 1000 + (timer?.runtime || 0); */
+  if (stopwatch.isRunning()) {
+    totalTime += stopwatch.getElapsedRunningTime() / 1000;
+  }
+  
   return (
     <Box
       display="flex"
       alignItems="center"
-      style={{ opacity: !!timer ? "100%" : "40%", gap: "32px" }}
+      style={{
+        //opacity: !!timer ? "100%" : "40%",
+        gap: "32px"
+      }}
     >
       <Typography variant="h1">
-        {toTimestring(timer?.active ? elapsedTime : timer?.runtime)}
+        {/* {toTimestring(timer?.active ? elapsedTime : timer?.runtime)} */}
+        {toTimestring(totalTime)}
       </Typography>
-      <PlayerButton
-        className={!!timer ? "interact" : ""}
-        size="72px"
-        onClick={!!timer ? onPlayPause : () => {}}
-      />
+      {/* <PlayerButton
+          className={!!timer ? "interact" : ""}
+          size="72px"
+          onClick={!!timer ? onPlayPause : () => {}}
+          /> */}
     </Box>
   );
 }
@@ -213,14 +257,41 @@ const TimerButton = ({
   selected,
   neutral,
   onClick,
+  stopwatch,
 } : {
   timer: Timer
   selected: boolean,
   neutral: boolean,
   onClick: any,
+  stopwatch: any
 }) => {
+  const [forceRender, setForceRender] = useState(false);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setForceRender(!forceRender);
+    }, 200);
+    
+    return () => {
+      clearTimeout(timeout);
+    };
+  })
+
+  let runtime = timer.runtime
+  if (selected && stopwatch.isRunning()) {
+    runtime += stopwatch.getElapsedRunningTime() / 1000;
+  }
+  
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" style={{ gap: "8px" }}>
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      style={{
+        gap: "8px",
+        opacity: selected || neutral || timer.active ? "100%" : "40%",
+      }}
+    >
       <Box
         p="16px"
         display="flex"
@@ -228,7 +299,6 @@ const TimerButton = ({
         sx={{
           border: "2px solid",
           borderColor: timer.active ? DefaultColors.accent : DefaultColors.text,
-          opacity: selected || neutral || timer.active ? "100%" : "40%",
         }}
         className="interact"
       >
@@ -237,7 +307,7 @@ const TimerButton = ({
         </Typography>
       </Box>
       <Typography variant="h6">
-        {toTimestring(timer.runtime)}
+        {toTimestring(runtime)}
       </Typography>
     </Box>
   )
