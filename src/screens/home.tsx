@@ -8,65 +8,60 @@ import { useStopwatch } from "react-use-precision-timer";
 import { DefaultColors } from "style/colors";
 import { Timer } from "models/timer";
 import { toTimestring } from "utils/strutils";
+import { useActivity } from "hooks/activity";
+import { useTimers } from "hooks/timers";
 
 /*****************************************************************************
  * Default Component
  *****************************************************************************/
 export default function ProductoHome () {
-  const [activeTimerIdx, setActiveTimerIdx] = useState(null);
-  const [timers, setTimers] = useState<Timer[]>([
-    {
-      name: "alluder",
-      runtime: 0,
-    },
-    {
-      name: "cinemetrics",
-      runtime: 0,
-    },
-    {
-      name: "producto",
-      runtime: 0,
-    },
-    {
-      name: "vintnox",
-      runtime: 0,
-    },
-    {
-      name: "weeding",
-      runtime: 0,
-    },
-    {
-      name: "butts",
-      runtime: 0,
-    },
-  ]);
+  const { activity, updateActivity } = useActivity();
+  const { timers, updateTimer } = useTimers();
 
-  const updateTimerAtIdx = (idx: string, key: string, val: any) => {
-    let copy = [...timers];
-    copy[idx][key] = Math.trunc(val);
-    setTimers(copy);
-  }
+  const [activeTimerId, setActiveTimerId] = useState(null);
 
   const stopwatch = useStopwatch();
-  const activeTimer = timers[activeTimerIdx];
   const totalTime = timers.reduce((accum, timer) => accum + timer.runtime, 0);
+  const activeTimer = timers.find(timer => timer.id === activeTimerId);
 
-  const handleClickTimer = (idx: number) => {
-    updateActiveTimer();
+  const handleClickTimer = (timer: Timer) => {
+    /* updateActiveTimer(); */
 
-    if (idx === activeTimerIdx) {
-      stopwatch.pause();
-      setActiveTimerIdx(null);
+    if (timer.id === activeTimerId) {
+      /* stopwatch.pause(); */
+      updateActivity({
+        ...activity,
+        timer: null,
+      });
     } else {
-      stopwatch.start();
-      setActiveTimerIdx(idx);
+      /* stopwatch.start(); */
+      updateActivity({
+        ...activity,
+        timer: timer.id,
+      });
     }
   }
+
+  useEffect(() => {
+    if (activity) {
+      updateActiveTimer();
+      
+      if (activity.timer) {
+        stopwatch.start();
+      } else {
+        stopwatch.pause();
+      }
+      setActiveTimerId(activity.timer);
+    }
+  }, [activity])
 
   const updateActiveTimer = () => {
     if (activeTimer) {
       const newTime = stopwatch.getElapsedRunningTime() / 1000 + (activeTimer.runtime || 0);
-      updateTimerAtIdx(activeTimerIdx, 'runtime', newTime);
+      updateTimer(activeTimer, {
+        ...activeTimer,
+        runtime: Math.trunc(newTime),
+      });
     }
   }
   
@@ -85,19 +80,20 @@ export default function ProductoHome () {
         alignItems="center"
         style={{ gap: "32px" }}
       >
-        <Player
+        <Stopwatch
+          active
           size="xl"
           stopwatch={stopwatch}
-          runtime={totalTime}
+          offset={totalTime}
         />
         <Box display="flex" style={{ gap: "16px" }}>
           {timers.map((timer, idx) => (
             <TimerButton
               key={timer.name}
               timer={timer}
-              neutral={activeTimerIdx === null}
-              active={activeTimerIdx === idx}
-              onClick={() => handleClickTimer(idx)}
+              neutral={activeTimerId === null}
+              active={activeTimerId === timer.id}
+              onClick={() => handleClickTimer(timer)}
               stopwatch={stopwatch}
             />
           ))}
@@ -111,14 +107,16 @@ export default function ProductoHome () {
  * Helper Components
  *****************************************************************************/
 
-const Player = ({
+const Stopwatch = ({
   size,
   stopwatch,
-  runtime,
+  offset,
+  active,
 }: {
   size?: "sm"|"md"|"lg"|"xl",
   stopwatch: any,
-  runtime: number
+  offset: number,
+  active?: boolean,
 }) => {
   const [forceRender, setForceRender] = useState(false);
 
@@ -139,7 +137,8 @@ const Player = ({
     };
   })
 
-  if (stopwatch.isRunning()) {
+  let runtime = offset;
+  if (active && stopwatch.isRunning()) {
     runtime += stopwatch.getElapsedRunningTime() / 1000;
   }
   
@@ -166,11 +165,6 @@ const TimerButton = ({
   onClick: any,
   stopwatch: any
 }) => {
-  let runtime = timer.runtime
-  if (active && stopwatch.isRunning()) {
-    runtime += stopwatch.getElapsedRunningTime() / 1000;
-  }
-  
   return (
     <Box
       display="flex"
@@ -195,10 +189,11 @@ const TimerButton = ({
           {timer.name}
         </Typography>
       </Box>
-      <Player
+      <Stopwatch
         size="sm"
         stopwatch={stopwatch}
-        runtime={runtime}
+        offset={timer.runtime}
+        active={active}
       />
     </Box>
   )
