@@ -4,15 +4,12 @@
     "version": "0.0.1",
     "description": "producto",
     "action": {
-        "default_popup": "extension.html"
+        "default_popup": "extension.html",
+        "default_icon": "./images/logo192.png"
     },
     "background": {
         "service_worker": "background.js"
     },
-    "content_scripts": [{
-        "matches": ["http://*/*", "https://*/*"],
-        "js": ["main.js"]
-    }],
     "permissions": [
         "activeTab",
         "scripting"

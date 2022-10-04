@@ -39,7 +39,7 @@ const getFileManagerPlugin = () => {
         delete: Object.values(manifestFiles).concat(
           buildFiles.map(
             (filename) => `build/${filename}`
-          )
+          ),
         ),
       },
     },
@@ -60,23 +60,23 @@ module.exports = {
         default: false,
       },
     };
-
+    
     // `false`: each entry chunk embeds runtime.
     // The extension is built with a single entry including all JS.
     // https://symfonycasts.com/screencast/webpack-encore/single-runtime-chunk
     config.optimization.runtimeChunk = false;
-
+    
     config.entry = {
       // web extension
       main: `./src/${target}/index.tsx`,
       // background script that has to be referenced in the extension manifest
       background: `./src/${target}/background/background.ts`,
     };
-
+    
     // Filenames of bundles must not include `[contenthash]`, so that they can be referenced in `extension-manifest.json`.
     // The `[name]` is taken from `config.entry` properties, so if we have `main` and `background` as properties, we get 2 output files - main.js and background.js.
     config.output.filename = "[name].js";
-
+    
     // `MiniCssExtractPlugin` is used by the default CRA webpack configuration for
     // extracting CSS into separate files. The plugin has to be removed because it
     // uses `[contenthash]` in filenames of the separate CSS files.
@@ -97,3 +97,4 @@ module.exports = {
     return config;
   },
 };
+
