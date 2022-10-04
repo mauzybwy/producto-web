@@ -17,7 +17,7 @@ function App() {
   
   return (
     <ThemeProvider theme={theme}>
-      <div style={{ width: "350px", height: "500px" }}>
+      <div style={{ width: "400px", height: "500px" }}>
         <ProductoHome />
       </div>
     </ThemeProvider>

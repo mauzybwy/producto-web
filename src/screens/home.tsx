@@ -3,15 +3,18 @@
  *****************************************************************************/
 import { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
-import { Rings } from "react-loader-spinner";
 
-import { DefaultColors } from "style/colors";
 import { Timer } from "models/timer";
-import { toTimestring } from "utils/strutils";
+import Stopwatch from "components/stopwatch";
+import CTA from "components/cta";
+import LoadingAnimation from "components/loading-animation";
 import { useActivity } from "hooks/activity";
 import { useTimers } from "hooks/timers";
 import { useMobileCheck } from "hooks/mobile";
 import { checkIsExtension } from "extension/services/environment-service";
+import { DefaultColors } from "style/colors";
+
+import { ChevronLeft, ChevronRight } from "tabler-icons-react";
 
 /*****************************************************************************
  * Default Component
@@ -22,6 +25,8 @@ export default function ProductoHome () {
   const { activity, updateActivity } = useActivity();
   const { timers, updateTimer, clearTimers } = useTimers();
   const [loading, setLoading] = useState(true);
+  const [countUp, setCountUp] = useState(true);
+  const [countdownTime, setCountdownTime] = useState(900);
 
   useEffect(() => {
     setTimeout(() => {
@@ -70,26 +75,28 @@ export default function ProductoHome () {
       });
     }
   }
+
+  const handleClickUpDown = () => {
+    if (activeTimer) {
+      handleClickTimer(activeTimer)
+    }
+    setCountUp(!countUp)
+  }
+
+  const handleDecrementCountdown = () => {
+    if (countdownTime > 600) {
+      setCountdownTime(countdownTime - 300);
+    }
+  }
+
+  const handleIncrementCountdown = () => {
+    if (countdownTime < 7200) {
+      setCountdownTime(countdownTime + 300);
+    }
+  }
   
   return loading ? (
-    <Box
-      display="flex"
-      width={isMobile ? "100%" : "100vw"}
-      height={isMobile ? "100vh" : "100vh"}
-      justifyContent="center"
-      alignItems="center"
-    >
-      <Rings
-        height="160px"
-        width="160px"
-        color={DefaultColors.accent}
-        radius="6"
-        wrapperStyle={{}}
-        wrapperClass=""
-        visible={true}
-        ariaLabel="rings-loading"
-      />
-    </Box>
+    <LoadingAnimation />
   ) : (
     <Box
       pt={(isMobile && !isExtension) ? "96px" : undefined}
@@ -109,47 +116,54 @@ export default function ProductoHome () {
           gap: "16px",
         }}
       >
-        <Stopwatch
-          active
-          size={isMobile ? "lg" : "xl"}
-          offset={totalTime}
-        />
-        <Box
-          p="8px"
-          width={isMobile ? "100%" : "300px"}
-          display="flex"
-          justifyContent="center"
-          sx={{
-            border: "2px solid",
-            borderColor: DefaultColors.mid,
-            boxSizing: "border-box",
-          }}
-          className="interact"
-          onClick={handleNewSession}
-        >
-          <Typography className="disable-select" variant="h6">
-            + new session
-          </Typography>
-        </Box>
-        <Box />
-        <Box
-          display="flex"
-          style={{
-            gap: isMobile ? "32px" : "16px",
-            flexWrap: isMobile ? "wrap" : "nowrap",
-          }}
-        >
-          {timers.map((timer, idx) => (
-            <TimerButton
-              key={timer.name}
-              timer={timer}
-              neutral={activeTimerId === null}
-              active={activeTimerId === timer.id}
-              onClick={() => handleClickTimer(timer)}
-              style={{ width: isMobile ? "100%" : undefined }}
+        <Box display="flex" alignItems="center" style={{ gap: "16px" }}>
+          {!countUp && !activeTimerId && (
+            <ChevronLeft
+              size="32px"
+              className="interact"
+              onClick={handleDecrementCountdown}
             />
-          ))}
+          )}
+          <Stopwatch
+            active
+            countdown={!countUp}
+            size={isMobile ? "md" : "xl"}
+            offset={countUp ? totalTime : countdownTime}
+            onCountdownFinish={() => {}}
+          />
+          {!countUp && !activeTimerId && (
+            <ChevronRight
+              size="32px"
+              className="interact"
+              onClick={handleIncrementCountdown}
+            />
+          )}
         </Box>
+        <Box
+          width={isMobile ? "100%" : undefined}
+          display="flex"
+          style={{ gap: "8px" }}
+        >
+          <CTA
+            disable={activeTimerId && !countUp}
+            title="+ new session"
+            onClick={handleNewSession}
+            style={{ flex: 1, width: isMobile ? "100%" : "300px" }}
+          />
+          <CTA
+            disable={activeTimerId && !countUp}
+            title={countUp ? "up" : "down"}
+            onClick={handleClickUpDown}
+            style={{ width: "100px" }}
+          />
+        </Box>
+        <Box /> {/* GAP */}
+        <TimerButtons
+          disable={activeTimerId && !countUp}
+          timers={timers}
+          activeTimerId={activeTimerId}
+          onClickTimer={handleClickTimer}
+        />
       </Box>
     </Box>
   );
@@ -159,46 +173,29 @@ export default function ProductoHome () {
  * Helper Components
  *****************************************************************************/
 
-const Stopwatch = ({
-  size,
-  offset,
-  active,
-}: {
-  size?: "sm"|"md"|"lg"|"xl",
-  offset: number,
-  active?: boolean,
-}) => {
-  const [forceRender, setForceRender] = useState(false);
-  const { activity } = useActivity();
-
-  const variant = {
-    "sm": "h6",
-    "md": "h4",
-    "lg": "h2",
-    "xl": "h1",
-  }[size] || "h4";
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setForceRender(!forceRender);
-    }, 200);
-    
-    return () => {
-      clearTimeout(timeout);
-    };
-  })
-
-  let runtime = offset;
-  if (active && activity?.timer) {
-    const diff = (Date.now() / 1000) - activity.timeUpdated.seconds;
-    runtime += diff;
-  }
+const TimerButtons = ({ timers, activeTimerId, onClickTimer, disable }) => {
+  const isMobile = useMobileCheck();
   
   return (
-    //@ts-ignore
-    <Typography className="disable-select" variant={variant}>
-      {toTimestring(runtime)}
-    </Typography>
+    <Box
+      display="flex"
+      style={{
+        gap: isMobile ? "32px" : "16px",
+        flexWrap: isMobile ? "wrap" : "nowrap",
+      }}
+    >
+      {timers.map((timer, idx) => (
+        <TimerButton
+          key={timer.name}
+          disable={disable}
+          timer={timer}
+          neutral={activeTimerId === null}
+          active={activeTimerId === timer.id}
+          onClick={() => onClickTimer(timer)}
+          style={{ width: isMobile ? "100%" : undefined }}
+        />
+      ))}
+    </Box>
   );
 }
 
@@ -210,12 +207,14 @@ const TimerButton = ({
   active,
   onClick,
   style,
+  disable,
 } : {
   timer: Timer
   neutral: boolean,
   active: boolean,
   onClick: any,
   style?: any,
+  disable?: boolean,
 }) => {
   const isMobile = useMobileCheck();
   
@@ -231,20 +230,17 @@ const TimerButton = ({
         ...style,
       }}
     >
-      <Box
-        p={isMobile ? "8px" : "16px"}
-        display="flex"
-        onClick={onClick}
-        sx={{
-          border: "2px solid",
+      <CTA
+        disable={disable}
+        variant="h5"
+        title={timer.name}
+        style={{
           borderColor: active ? DefaultColors.accent : DefaultColors.text,
+          padding: isMobile ? "8px" : "16px",
+          opacity: active ? "100%" : undefined
         }}
-        className="interact"
-      >
-        <Typography className="disable-select" variant="h5">
-          {timer.name}
-        </Typography>
-      </Box>
+        onClick={onClick}
+      />
       <Stopwatch
         size="sm"
         offset={timer.runtime}
