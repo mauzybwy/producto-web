@@ -20,7 +20,7 @@ export default function ProductoHome () {
   const isExtension = checkIsExtension();
   const isMobile = useMobileCheck();
   const { activity, updateActivity } = useActivity();
-  const { timers, updateTimer } = useTimers();
+  const { timers, updateTimer, clearTimers } = useTimers();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -48,9 +48,15 @@ export default function ProductoHome () {
     });
   }
 
+  const handleNewSession = () => {
+    if (activeTimerId) {
+      handleClickTimer(activeTimer)
+    }
+    clearTimers();
+  }
+
   useEffect(() => {
     if (activity) {
-      /* updateActiveTimer(); */
       setActiveTimerId(activity.timer);
     }
   }, [activity])
@@ -69,7 +75,7 @@ export default function ProductoHome () {
     <Box
       display="flex"
       width={isMobile ? "100%" : "100vw"}
-      height={isMobile ? "100%" : "100vh"}
+      height={isMobile ? "100vh" : "100vh"}
       justifyContent="center"
       alignItems="center"
     >
@@ -98,8 +104,9 @@ export default function ProductoHome () {
         flexDirection="column"
         justifyContent="center"
         alignItems="center"
+        px={isMobile ? "16px" : "0px"}
         style={{
-          gap: "32px",
+          gap: "16px",
         }}
       >
         <Stopwatch
@@ -108,8 +115,25 @@ export default function ProductoHome () {
           offset={totalTime}
         />
         <Box
+          p="8px"
+          width={isMobile ? "100%" : "300px"}
           display="flex"
-          px={isMobile ? "16px" : "0px"}
+          justifyContent="center"
+          sx={{
+            border: "2px solid",
+            borderColor: DefaultColors.mid,
+            boxSizing: "border-box",
+          }}
+          className="interact"
+          onClick={handleNewSession}
+        >
+          <Typography className="disable-select" variant="h6">
+            + new session
+          </Typography>
+        </Box>
+        <Box />
+        <Box
+          display="flex"
           style={{
             gap: isMobile ? "32px" : "16px",
             flexWrap: isMobile ? "wrap" : "nowrap",

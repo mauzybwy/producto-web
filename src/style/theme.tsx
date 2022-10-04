@@ -46,5 +46,8 @@ export const theme = createTheme({
   /* TYPOGRAPHY */
   typography: {
     fontFamily: "MONOSPACE",
+    h6: {
+      lineHeight: undefined,
+    },
   },
 });

@@ -34,5 +34,14 @@ export const useTimers = () => {
     await setDoc(doc(db, "Timers", timer.id), data);
   }
 
-  return { timers, updateTimer };
+  const clearTimers = async () => {
+    timers.forEach(timer => {
+      setDoc(doc(db, "Timers", timer.id), {
+        ...timer,
+        runtime: 0,
+      })
+    })
+  }
+
+  return { timers, updateTimer, clearTimers };
 }
