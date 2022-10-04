@@ -11,7 +11,7 @@ import App from './App';
  * Render
  *****************************************************************************/
 const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
+  document.getElementById('producto-web-root') as HTMLElement
 );
 root.render(
   <React.StrictMode>

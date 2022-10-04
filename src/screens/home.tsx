@@ -3,6 +3,7 @@
  *****************************************************************************/
 import { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
+import { Rings } from "react-loader-spinner";
 
 import { DefaultColors } from "style/colors";
 import { Timer } from "models/timer";
@@ -10,14 +11,23 @@ import { toTimestring } from "utils/strutils";
 import { useActivity } from "hooks/activity";
 import { useTimers } from "hooks/timers";
 import { useMobileCheck } from "hooks/mobile";
+import { checkIsExtension } from "extension/services/environment-service";
 
 /*****************************************************************************
  * Default Component
  *****************************************************************************/
 export default function ProductoHome () {
+  const isExtension = checkIsExtension();
   const isMobile = useMobileCheck();
   const { activity, updateActivity } = useActivity();
   const { timers, updateTimer } = useTimers();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 500);
+  }, [])
 
   const [activeTimerId, setActiveTimerId] = useState(null);
 
@@ -55,9 +65,28 @@ export default function ProductoHome () {
     }
   }
   
-  return (
+  return loading ? (
     <Box
-      pt={isMobile ? "96px" : undefined}
+      display="flex"
+      width={isMobile ? "100%" : "100vw"}
+      height={isMobile ? "100%" : "100vh"}
+      justifyContent="center"
+      alignItems="center"
+    >
+      <Rings
+        height="160px"
+        width="160px"
+        color={DefaultColors.accent}
+        radius="6"
+        wrapperStyle={{}}
+        wrapperClass=""
+        visible={true}
+        ariaLabel="rings-loading"
+      />
+    </Box>
+  ) : (
+    <Box
+      pt={(isMobile && !isExtension) ? "96px" : undefined}
       width={isMobile ? "100%" : "100vw"}
       height={isMobile ? "100%" : "100vh"}
       display="flex"

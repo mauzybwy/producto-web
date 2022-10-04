@@ -2,22 +2,29 @@
  * Import
  *****************************************************************************/
 import { useEffect } from "react";
-import ProductoRouter from "./navigation/router";
 import { ThemeProvider } from "@mui/material/styles";
+
 import { theme } from "style/theme";
+import ProductoHome from "screens/home";
 
 /*****************************************************************************
  * App
  *****************************************************************************/
-
-export default function App() {
+function App() {
   useEffect(() => {
-    console.log("LOAD WEB");
+    console.log("LOAD EXTENSION");
   }, [])
   
   return (
     <ThemeProvider theme={theme}>
-      <ProductoRouter />
+      <div style={{ width: "350px", height: "500px" }}>
+        <ProductoHome />
+      </div>
     </ThemeProvider>
   );
 }
+
+/*****************************************************************************
+ * Export
+ *****************************************************************************/
+export default App;
