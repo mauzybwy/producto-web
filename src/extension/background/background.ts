@@ -11,8 +11,3 @@ const browser = ExtensionConfig.browserBase;
 browser.runtime.onInstalled.addListener(() => {
   console.log("INSTALLED");
 });
-
-browser.browserAction.onClicked.addListener((activeTab) => {
-  let url = browser.runtime.getURL("cinemetrics.html");
-  browser.tabs.create({ url });
-});
