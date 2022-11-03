@@ -38,7 +38,7 @@ const Overlay = ({ activity }) => {
         zIndex: 100000,
         top: 0,
         left: 0,
-        backgroundColor: "#0c1b31F5",
+        backgroundColor: "#0c1b31E0",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",

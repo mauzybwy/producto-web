@@ -25,7 +25,7 @@ export default function ProductoHome () {
   const { activity, updateActivity } = useActivity();
   const { timers, updateTimer, clearTimers } = useTimers();
   const [loading, setLoading] = useState(true);
-  const [countdownTime, setCountdownTime] = useState(900);
+  const countdownTime = activity?.countdownTime || 900;
   const countUp = !!activity?.countUp;
 
   useEffect(() => {
@@ -99,13 +99,17 @@ export default function ProductoHome () {
 
   const handleDecrementCountdown = () => {
     if (countdownTime > 600) {
-      setCountdownTime(countdownTime - 300);
+      updateActivity({
+        countdownTime: countdownTime - 300,
+      });
     }
   }
 
   const handleIncrementCountdown = () => {
     if (countdownTime < 7200) {
-      setCountdownTime(countdownTime + 300);
+      updateActivity({
+        countdownTime: countdownTime + 300,
+      });
     }
   }
   
