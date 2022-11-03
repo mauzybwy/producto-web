@@ -25,8 +25,8 @@ export default function ProductoHome () {
   const { activity, updateActivity } = useActivity();
   const { timers, updateTimer, clearTimers } = useTimers();
   const [loading, setLoading] = useState(true);
-  const [countUp, setCountUp] = useState(true);
   const [countdownTime, setCountdownTime] = useState(900);
+  const countUp = !!activity?.countUp;
 
   useEffect(() => {
     setTimeout(() => {
@@ -43,7 +43,6 @@ export default function ProductoHome () {
     updateActiveTimer();
 
     updateActivity({
-      ...activity,
       timer: timer.id === activeTimerId ? null : timer.id,
     });
 
@@ -58,6 +57,18 @@ export default function ProductoHome () {
       handleClickTimer(activeTimer)
     }
     clearTimers();
+  }
+
+  const handleGiveUp = () => {
+    if (activeTimerId) {
+      handleClickTimer(activeTimer)
+    }
+  }
+
+  const handleCountdownFinish = () => {
+    updateActivity({
+      countUp: true,
+    });
   }
 
   useEffect(() => {
@@ -76,11 +87,14 @@ export default function ProductoHome () {
     }
   }
 
-  const handleClickUpDown = () => {
+  const handleClickUpDown = async () => {
     if (activeTimer) {
       handleClickTimer(activeTimer)
     }
-    setCountUp(!countUp)
+
+    updateActivity({
+      countUp: !countUp,
+    });
   }
 
   const handleDecrementCountdown = () => {
@@ -129,7 +143,7 @@ export default function ProductoHome () {
             countdown={!countUp}
             size={isMobile ? "md" : "xl"}
             offset={countUp ? totalTime : countdownTime}
-            onCountdownFinish={() => {}}
+            onCountdownFinish={handleCountdownFinish}
           />
           {!countUp && !activeTimerId && (
             <ChevronRight
@@ -164,6 +178,17 @@ export default function ProductoHome () {
           activeTimerId={activeTimerId}
           onClickTimer={handleClickTimer}
         />
+        <Typography
+          style={{
+            textDecoration: "underline",
+            cursor: "pointer",
+            visibility: !countUp && activeTimerId ? undefined : "hidden",
+          }}
+          className="disable-select interact"
+          onClick={handleGiveUp}
+        >
+          give up?
+        </Typography>
       </Box>
     </Box>
   );

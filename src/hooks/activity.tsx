@@ -29,7 +29,7 @@ export const useActivity = () => {
     await setDoc(doc(db, "Activity", "test"), {
       ...data,
       timeUpdated: new Date(),
-    });
+    }, { merge: true });
   }
 
   return { activity, updateActivity };
