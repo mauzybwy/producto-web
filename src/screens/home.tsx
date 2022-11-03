@@ -117,7 +117,8 @@ export default function ProductoHome () {
     <LoadingAnimation />
   ) : (
     <Box
-      pt={(isMobile && !isExtension) ? "96px" : undefined}
+      pt={(isMobile && !isExtension) ? "96px" : isExtension ? "16px" : undefined}
+      pb={isExtension ? "16px" : undefined}
       width={isMobile ? "100%" : "100vw"}
       height={isMobile ? "100%" : "100vh"}
       display="flex"
