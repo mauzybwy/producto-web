@@ -5,12 +5,14 @@ import { useEffect, useState } from "react";
 import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "setup/firebase";
 
+import { useMe } from "hooks/users";
 import { Blocked } from "models/blocked";
 
 /*****************************************************************************
  * Hooks
  *****************************************************************************/
 export const useBlocklist = () => {
+  const me = useMe();
   const [blocklist, setBlocklist] = useState<Blocked[]>([])
   
   useEffect(() => {

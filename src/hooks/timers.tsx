@@ -2,9 +2,10 @@
  * Import
  *****************************************************************************/
 import { useEffect, useState } from "react";
-import { doc, setDoc, collection, onSnapshot } from "firebase/firestore";
+import { doc, where, setDoc, collection, query, onSnapshot } from "firebase/firestore";
 import { db } from "setup/firebase";
 
+import { useMe } from "hooks/users";
 import { Timer } from "models/timer";
 
 /*****************************************************************************
@@ -12,10 +13,16 @@ import { Timer } from "models/timer";
  *****************************************************************************/
 export const useTimers = () => {
   const [timers, setTimers] = useState<Timer[]>([]);
+  const me = useMe();
   
   useEffect(() => {
+    if (!me) return;
+    
     const unsub = onSnapshot(
+      query(
       collection(db, "Timers"),
+        where("owner", "==", me.uid),
+      ),
       { includeMetadataChanges: true }, 
       (snap) => setTimers(        
         snap.docs.map(doc => ({
@@ -28,7 +35,7 @@ export const useTimers = () => {
     return () => {
       unsub();
     }
-  }, []);
+  }, [me]);
 
   const updateTimer = async (timer: Timer, data: any) => {
     await setDoc(doc(db, "Timers", timer.id), data);

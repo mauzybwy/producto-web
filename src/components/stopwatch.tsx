@@ -36,8 +36,10 @@ export default function Stopwatch ({
   useEffect(() => {
     const timeout = setTimeout(() => {
       setForceRender(!forceRender);
-      if (runtime <= 1) {
-        onCountdownFinish();
+      if (runtime <= 1 && active && countdown) {
+        if (onCountdownFinish) {
+          onCountdownFinish();
+        }
         new Notification("producto", { body: "Your timer is finished!" })
       }
     }, 200);

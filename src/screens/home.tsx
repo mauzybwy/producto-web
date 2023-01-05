@@ -32,7 +32,7 @@ export default function ProductoHome () {
     setTimeout(() => {
       setLoading(false);
     }, 500);
-  }, [])
+  }, []);
 
   const [activeTimerId, setActiveTimerId] = useState(null);
 
