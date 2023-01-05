@@ -43,11 +43,11 @@ export default function Header () {
         {me && (
           <CTA title="logout" variant="body2" onClick={handleLogout} />
         )}
-        <BrandGithub
-          size="32px"
-          onClick={() => window.open("https://github.com/mauzybwy/producto-web")}
-          className="interact"
-        />
+        {/* <BrandGithub
+            size="32px"
+            onClick={() => window.open("https://github.com/mauzybwy/producto-web")}
+            className="interact"
+            /> */}
       </Box>
     </Box>
   )

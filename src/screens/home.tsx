@@ -13,6 +13,7 @@ import { useTimers } from "hooks/timers";
 import { useMobileCheck } from "hooks/mobile";
 import { checkIsExtension } from "extension/services/environment-service";
 import { DefaultColors } from "style/colors";
+import { useMe } from "hooks/users";
 
 import { ChevronLeft, ChevronRight } from "tabler-icons-react";
 
@@ -20,6 +21,7 @@ import { ChevronLeft, ChevronRight } from "tabler-icons-react";
  * Default Component
  *****************************************************************************/
 export default function ProductoHome () {
+  const me = useMe();
   const isExtension = checkIsExtension();
   const isMobile = useMobileCheck();
   const { activity, updateActivity } = useActivity();
@@ -46,10 +48,12 @@ export default function ProductoHome () {
       timer: timer.id === activeTimerId ? null : timer.id,
     });
 
-    const url = `https://joinjoaomgcd.appspot.com/_ah/api/messaging/v1/sendPush?apikey=d002d9f577024aa8841db563c35cfc89&deviceId=f928bcf493074fe6ab3859920c587cfb&text=${timer.id === activeTimerId ? "un" : ""}block_apps`
-    await fetch(url, {
-      method: "GET",
-    });
+    if (me?.uid === "bgvWaZTOrAUOoIlVBc0JbV8drTh1") {
+      const url = `https://joinjoaomgcd.appspot.com/_ah/api/messaging/v1/sendPush?apikey=d002d9f577024aa8841db563c35cfc89&deviceId=f928bcf493074fe6ab3859920c587cfb&text=${timer.id === activeTimerId ? "un" : ""}block_apps`
+      await fetch(url, {
+        method: "GET",
+      });
+    }
   }
 
   const handleNewSession = () => {
