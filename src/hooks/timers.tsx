@@ -2,7 +2,7 @@
  * Import
  *****************************************************************************/
 import { useEffect, useState } from "react";
-import { doc, where, setDoc, collection, query, onSnapshot } from "firebase/firestore";
+import { doc, where, addDoc, setDoc, collection, query, onSnapshot } from "firebase/firestore";
 import { db } from "setup/firebase";
 
 import { useMe } from "hooks/users";
@@ -29,6 +29,7 @@ export const useTimers = () => {
           ...doc.data(),
           id: doc.id
         } as Timer))
+            .filter(timer => !!timer.name)
       )
     );
 
@@ -38,7 +39,15 @@ export const useTimers = () => {
   }, [me]);
 
   const updateTimer = async (timer: Timer, data: any) => {
-    await setDoc(doc(db, "Timers", timer.id), data);
+    await setDoc(doc(db, "Timers", timer.id), data, { merge: true });
+  }
+
+  const createTimer = async (name: string) => {
+    await addDoc(collection(db, "Timers"), {
+      name,
+      owner: me.uid,
+      runtime: 0,
+    });
   }
 
   const clearTimers = async () => {
@@ -50,5 +59,5 @@ export const useTimers = () => {
     })
   }
 
-  return { timers, updateTimer, clearTimers };
+  return { timers, updateTimer, createTimer, clearTimers };
 }

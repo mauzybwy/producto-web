@@ -26,6 +26,7 @@ export default function CTA ({
       p="8px"
       display="flex"
       justifyContent="center"
+      alignItems="center"
       sx={{
         border: "2px solid",
         borderColor: DefaultColors.mid,

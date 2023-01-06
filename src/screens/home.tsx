@@ -2,7 +2,7 @@
  * Import
  *****************************************************************************/
 import { useEffect, useState } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, TextField, Input } from "@mui/material";
 
 import { Timer } from "models/timer";
 import Stopwatch from "components/stopwatch";
@@ -14,6 +14,7 @@ import { useMobileCheck } from "hooks/mobile";
 import { checkIsExtension } from "extension/services/environment-service";
 import { DefaultColors } from "style/colors";
 import { useMe } from "hooks/users";
+import { PageContainer } from "components/containers";
 
 import { ChevronLeft, ChevronRight } from "tabler-icons-react";
 
@@ -27,8 +28,9 @@ export default function ProductoHome () {
   const { activity, updateActivity } = useActivity();
   const { timers, updateTimer, clearTimers } = useTimers();
   const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState(true);
   const countdownTime = activity?.countdownTime || 900;
-  const countUp = !!activity?.countUp;
+  const countDown = !!activity?.countDown;
 
   useEffect(() => {
     setTimeout(() => {
@@ -60,6 +62,9 @@ export default function ProductoHome () {
     if (activeTimerId) {
       handleClickTimer(activeTimer)
     }
+    updateActivity({
+      countDown: false,
+    });
     clearTimers();
   }
 
@@ -69,9 +74,16 @@ export default function ProductoHome () {
     }
   }
 
+  const handleClickEdit = () => {
+    if (activeTimerId) {
+      handleClickTimer(activeTimer)
+    }
+    setEditing(true);
+  }
+
   const handleCountdownFinish = () => {
     updateActivity({
-      countUp: true,
+      countDown: false,
     });
   }
 
@@ -97,7 +109,7 @@ export default function ProductoHome () {
     }
 
     updateActivity({
-      countUp: !countUp,
+      countDown: !countDown,
     });
   }
 
@@ -119,16 +131,10 @@ export default function ProductoHome () {
   
   return loading ? (
     <LoadingAnimation />
+  ) : editing ? (
+    <EditTimers onCancel={() => setEditing(false)} />
   ) : (
-    <Box
-      pt={(isMobile && !isExtension) ? "96px" : isExtension ? "16px" : undefined}
-      pb={isExtension ? "16px" : undefined}
-      width={isMobile ? "100%" : "100vw"}
-      height={isMobile ? "100%" : "100vh"}
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-    >
+    <PageContainer>
       <Box
         display="flex"
         flexDirection="column"
@@ -140,7 +146,7 @@ export default function ProductoHome () {
         }}
       >
         <Box display="flex" alignItems="center" style={{ gap: "16px" }}>
-          {!countUp && !activeTimerId && (
+          {countDown && !activeTimerId && (
             <ChevronLeft
               size="32px"
               className="interact"
@@ -149,12 +155,12 @@ export default function ProductoHome () {
           )}
           <Stopwatch
             active
-            countdown={!countUp}
+            countdown={countDown}
             size={isMobile ? "md" : "xl"}
-            offset={countUp ? totalTime : countdownTime}
+            offset={countDown ? countdownTime : totalTime}
             onCountdownFinish={handleCountdownFinish}
           />
-          {!countUp && !activeTimerId && (
+          {countDown && !activeTimerId && (
             <ChevronRight
               size="32px"
               className="interact"
@@ -168,21 +174,21 @@ export default function ProductoHome () {
           style={{ gap: "8px" }}
         >
           <CTA
-            disable={activeTimerId && !countUp}
+            disable={activeTimerId && countDown}
             title="+ new session"
             onClick={handleNewSession}
             style={{ flex: 1, width: isMobile ? "100%" : "300px" }}
           />
           <CTA
-            disable={activeTimerId && !countUp}
-            title={countUp ? "up" : "down"}
+            disable={activeTimerId && countDown}
+            title={countDown ? "down" : "up"}
             onClick={handleClickUpDown}
             style={{ width: "100px" }}
           />
         </Box>
         <Box /> {/* GAP */}
         <TimerButtons
-          disable={activeTimerId && !countUp}
+          disable={activeTimerId && countDown}
           timers={timers}
           activeTimerId={activeTimerId}
           onClickTimer={handleClickTimer}
@@ -191,21 +197,150 @@ export default function ProductoHome () {
           style={{
             textDecoration: "underline",
             cursor: "pointer",
-            visibility: !countUp && activeTimerId ? undefined : "hidden",
+            //visibility: countDown && activeTimerId ? undefined : "hidden",
           }}
           className="disable-select interact"
-          onClick={handleGiveUp}
+          onClick={countDown && activeTimerId ? handleGiveUp : handleClickEdit}
         >
-          give up?
+          {countDown && activeTimerId ? "give up?" : "manage timers"}
         </Typography>
       </Box>
-    </Box>
+    </PageContainer>
   );
 }
 
 /*****************************************************************************
  * Helper Components
  *****************************************************************************/
+
+const EditTimers = ({ onCancel }) => {
+  const me = useMe();
+  const isMobile = useMobileCheck();
+  const [paddedTimers, setPaddedTimers] = useState(new Array(6).fill(""))
+  const { timers, updateTimer, createTimer } = useTimers();
+
+  useEffect(() => {
+    let copy = [...paddedTimers];
+    timers.forEach((timer, idx) => copy[idx] = timer.name);
+    setPaddedTimers(copy);
+  }, [timers])
+  
+  const timersChanged = paddedTimers.reduce((accum, timer, idx) => {
+    if (accum) return accum;
+    
+    if (idx < timers.length) {
+      return timers[idx].name !== timer;
+    } else {
+      return !!timer;
+    }
+  }, false);
+
+  const updateTimerName = (name, idx) => {
+    let copy = [ ...paddedTimers ];
+    copy[idx] = name;
+    setPaddedTimers(copy);
+  }
+
+  const handleChangeTimerName = (evt, idx) => {
+    if (evt.target.value.length < 13) {
+      updateTimerName(evt.target.value, idx);
+    }
+  }
+
+  const handleSave = async () => {
+    for (let idx = 0; idx < paddedTimers.length; idx++) {
+      const name = paddedTimers[idx];
+      if (idx < timers.length) {
+        if (timers[idx].name !== name) {
+          updateTimer(timers[idx], { name })
+        }
+      } else if (!!name) {
+        createTimer(name);
+      }
+    }
+  }
+  
+  return (
+    <PageContainer>
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        style={{ gap: "32px" }}
+      >
+        <Box
+          display="flex"
+          px={isMobile ? "16px" : undefined}
+          width={isMobile ? undefined : "414px"}
+          style={{
+            gap: isMobile ? "32px" : "16px",
+            //flexWrap: isMobile ? "wrap" : "nowrap",
+            flexWrap: "wrap",
+          }}
+        >
+          {paddedTimers.map((timer, idx) => (
+            <Box
+              key={idx}
+              p="8px"
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              sx={{
+                border: "2px solid",
+                borderColor: DefaultColors.text,
+                boxSizing: "border-box",
+              }}
+            >
+              <Input
+                value={timer}
+                onChange={(evt) => handleChangeTimerName(evt, idx)}
+                disableUnderline
+                style={{ width: "175px" }}
+                inputProps={{
+                  style: {
+                    color: "white",
+                    borderColor: "white",
+                    fontSize: "1.5rem",
+                  }
+                }}
+              />
+            </Box>
+          ))}
+        </Box>
+        <Box display="flex" style={{ gap: "16px" }}>
+          <CTA
+            title="cancel"
+            onClick={onCancel}
+          />
+          <CTA
+            title="save"
+            disable={!timersChanged}
+            onClick={handleSave}
+          />
+        </Box>
+      </Box>
+    </PageContainer>
+  );
+}
+
+/****************************************************************************/
+
+const AddTimerButton = () => {
+  const isMobile = useMobileCheck();
+  
+  return (
+    <CTA
+      title="+"
+      variant="h4"
+      style={{
+        height: isMobile ? "44px" : "50px",
+        width: isMobile ? "100%" : "50px",
+      }}
+    />
+  );
+}
+
+/****************************************************************************/
 
 const TimerButtons = ({ timers, activeTimerId, onClickTimer, disable }) => {
   const isMobile = useMobileCheck();
@@ -220,7 +355,7 @@ const TimerButtons = ({ timers, activeTimerId, onClickTimer, disable }) => {
     >
       {timers.map((timer, idx) => (
         <TimerButton
-          key={timer.name}
+          key={timer.id}
           disable={disable}
           timer={timer}
           neutral={activeTimerId === null}
@@ -271,7 +406,8 @@ const TimerButton = ({
         style={{
           borderColor: active ? DefaultColors.accent : DefaultColors.text,
           padding: isMobile ? "8px" : "16px",
-          opacity: active ? "100%" : undefined
+          opacity: active ? "100%" : undefined,
+          minWidth: "120px",
         }}
         onClick={onClick}
       />

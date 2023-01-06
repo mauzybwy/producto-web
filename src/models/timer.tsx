@@ -1,6 +1,7 @@
 export interface Timer {
   name: string;
   runtime: number;
-  id: string;
+  id?: string;
   //active: boolean;
+  owner: string;
 }
