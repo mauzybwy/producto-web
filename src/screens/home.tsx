@@ -28,7 +28,7 @@ export default function ProductoHome () {
   const { activity, updateActivity } = useActivity();
   const { timers, updateTimer, clearTimers } = useTimers();
   const [loading, setLoading] = useState(true);
-  const [editing, setEditing] = useState(true);
+  const [editing, setEditing] = useState(false);
   const countdownTime = activity?.countdownTime || 900;
   const countDown = !!activity?.countDown;
 
