@@ -1,9 +1,9 @@
 /*****************************************************************************
  * Import
  *****************************************************************************/
-import { Box, Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 
-import { DefaultColors } from "style/colors";
+import colors from "style/colors";
 
 /*****************************************************************************
  * Default Component
@@ -14,24 +14,32 @@ export default function CTA ({
   style,
   disable,
   variant,
+  fullWidth,
+  type,
 } : {
   onClick?: any,
   title?: string,
   style?: any,
   disable?: boolean,
   variant?: any,
+  fullWidth?: boolean,
+  type?: any,
 }) {
   return (
-    <Box
-      p="8px"
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
+    <Button
+      type={type}
       sx={{
+        color: colors.text,
+        padding: "8px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
         border: "2px solid",
-        borderColor: DefaultColors.mid,
+        borderColor: colors.mid,
         boxSizing: "border-box",
         opacity: disable ? "50%" : "",
+        width: fullWidth ? "100%" : undefined,
+        textTransform: "lowercase",
         ...style,
       }}
       className={!disable ? "interact" : ""}
@@ -40,6 +48,6 @@ export default function CTA ({
       <Typography className="disable-select" variant={variant || "h6"}>
         {title}
       </Typography>
-    </Box>
+    </Button>
   );
 }

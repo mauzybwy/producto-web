@@ -2,7 +2,7 @@
  * Import
  *****************************************************************************/
 import { Box, Typography } from "@mui/material";
-import { DefaultColors } from "style/colors";
+import colors from "style/colors";
 
 /*****************************************************************************
  * Default Component
@@ -29,14 +29,14 @@ export default function ProductoHome () {
         <Box display="flex" flexDirection="column" style={{
           height: "50px",
           width: "50px",
-          backgroundColor: DefaultColors.accent,
+          backgroundColor: colors.accent,
         }}>
           <Typography style={{
             fontSize: "72px",
             lineHeight: "0px",
             paddingTop: "20px",
             paddingLeft: "7px",
-            color: DefaultColors.light,
+            color: colors.light,
           }}>
             p
           </Typography>

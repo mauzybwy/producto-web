@@ -41,7 +41,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "build:extension": "REACT_APP_BUILD_TARGET=extension react-app-rewired --max_old_space_size=4096 build && node post-build.js && rm -rf build-extension && mv build build-extension",
+    "build:extension": "REACT_APP_BUILD_TARGET=extension react-app-rewired --max_old_space_size=4096 build && node post-build.js && rm -rf build-ext-chrome && rm -rf build-ext-firefox && mv build build-ext-chrome && cp -r build-ext-chrome build-ext-firefox && cp public/ext-firefox-manifest.json build-ext-firefox/manifest.json",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

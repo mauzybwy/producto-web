@@ -2,7 +2,7 @@
  * Import
  *****************************************************************************/
 import { Box, Typography } from "@mui/material";
-import { DefaultColors } from "style/colors";
+import colors from "style/colors";
 import { useNavigate } from "react-router-dom";
 
 /*****************************************************************************
@@ -18,7 +18,7 @@ export default function Logo () {
       style={{
         height: "32px",
         width: "32px",
-        backgroundColor: DefaultColors.accent,
+        backgroundColor: colors.accent,
       }}
       onClick={() => navigate("/")}
       className="interact"
@@ -30,7 +30,7 @@ export default function Logo () {
           lineHeight: "0px",
           paddingTop: "13px",
           paddingLeft: "5px",
-          //color: DefaultColors.light,
+          //color: colors.light,
         }}
       >
         producto

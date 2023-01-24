@@ -18,7 +18,7 @@ const getFileManagerPlugin = () => {
     "asset-manifest.json",
   ];
   const manifestFiles = {
-    extension: `build/extension_manifest.json`,
+    extension: `build/ext-chrome-manifest.json`,
   };
 
   const fileManagerConfig = {

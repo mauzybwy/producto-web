@@ -7,11 +7,11 @@ let ExtensionConfig = {
 }
 
 if (checkIsExtension()) {
-  const EXTENSION_KIND = "google"; //  "firefox"; //
+  const EXTENSION_KIND = "firefox"; //  "firefox"; //
   const EXTENSION_ID =
     //@ts-ignore
     EXTENSION_KIND === "firefox"
-    ? "333cd29b4b960c74b5cedeb2c196dd2f09150009@temporary-addon"
+    ? "8eb2c43d05b13d3764b2733dd118a833e5c86d4d@temporary-addon"
     : "jlocmelkpbekapkplfohppkmolgcfgcc";
 
   //@ts-ignore

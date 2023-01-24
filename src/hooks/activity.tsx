@@ -15,6 +15,7 @@ export const useActivity = () => {
   const [activity, setActivity] = useState(null);
   
   useEffect(() => {
+    console.log("GOTCHA", me);
     if (!me) return;
     
     const unsub = onSnapshot(

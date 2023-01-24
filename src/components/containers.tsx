@@ -9,7 +9,7 @@ import { checkIsExtension } from "extension/services/environment-service";
  * Public Components
  *****************************************************************************/
 
-export const PageContainer = ({ children }) => {
+export const PageContainer = ({ children, style } : { children: any, style?: any }) => {
   const isMobile = useMobileCheck();
   const isExtension = checkIsExtension();
   
@@ -22,6 +22,7 @@ export const PageContainer = ({ children }) => {
       display="flex"
       justifyContent="center"
       alignItems="center"
+      style={style}
     >
       { children }
     </Box>

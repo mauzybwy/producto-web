@@ -1,0 +1,27 @@
+{
+    "manifest_version": 3,
+    "name": "producto",
+    "version": "0.0.1",
+    "description": "producto",
+    "action": {
+        "default_popup": "extension.html",
+        "default_icon": "./images/logo192.png"
+    },
+    "background": {
+        "service_worker": "background.js",
+        "persistent": true
+    },
+    "permissions": [
+        "activeTab",
+        "scripting",
+        "tabs"
+    ],
+    "content_scripts": [
+        {
+        "matches": [
+            "<all_urls>"
+        ],
+        "js": ["main.js"]
+      }
+    ]
+}

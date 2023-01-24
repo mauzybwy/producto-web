@@ -12,10 +12,11 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 export const useMe = () => {
   const [me, setMe] = useState(undefined);
 
-  useEffect(() =>{
+  useEffect(() => {
     const auth = getAuth();
     const unlisten = onAuthStateChanged(auth,
       authUser => {
+        console.log(authUser)
         authUser
         ? setMe(authUser)
         : setMe(null);

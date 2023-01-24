@@ -11,6 +11,8 @@
 # production
 /build
 /build-extension
+/build-ext-firefox
+/build-ext-chrome
 
 # misc
 .DS_Store

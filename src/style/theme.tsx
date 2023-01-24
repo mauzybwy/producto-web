@@ -2,7 +2,7 @@
  * Import
  *****************************************************************************/
 import { createTheme } from "@mui/material";
-import { DefaultColors } from "style/colors";
+import colors from "style/colors";
 
 /*****************************************************************************
  * Theme
@@ -12,7 +12,7 @@ export const theme = createTheme({
   palette: {
     primary: {
       // light: will be calculated from palette.primary.main,
-      main: DefaultColors.dark,
+      main: colors.dark,
       // dark: will be calculated from palette.primary.main,
       // contrastText: will be calculated to contrast with palette.primary.main
     },

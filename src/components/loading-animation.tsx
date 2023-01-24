@@ -6,7 +6,7 @@ import { Rings } from "react-loader-spinner";
 
 import { useMobileCheck } from "hooks/mobile";
 
-import { DefaultColors } from "style/colors";
+import colors from "style/colors";
 
 /*****************************************************************************
  * Default Component
@@ -25,7 +25,7 @@ export default function LoadingAnimation() {
       <Rings
         height="160px"
         width="160px"
-        color={DefaultColors.accent}
+        color={colors.accent}
         radius="6"
         wrapperStyle={{}}
         wrapperClass=""

@@ -12,7 +12,7 @@ import { useActivity } from "hooks/activity";
 import { useTimers } from "hooks/timers";
 import { useMobileCheck } from "hooks/mobile";
 import { checkIsExtension } from "extension/services/environment-service";
-import { DefaultColors } from "style/colors";
+import colors from "style/colors";
 import { useMe } from "hooks/users";
 import { PageContainer } from "components/containers";
 
@@ -287,7 +287,7 @@ const EditTimers = ({ onCancel }) => {
               alignItems="center"
               sx={{
                 border: "2px solid",
-                borderColor: DefaultColors.text,
+                borderColor: colors.text,
                 boxSizing: "border-box",
               }}
             >
@@ -404,7 +404,7 @@ const TimerButton = ({
         variant="h5"
         title={timer.name}
         style={{
-          borderColor: active ? DefaultColors.accent : DefaultColors.text,
+          borderColor: active ? colors.accent : colors.text,
           padding: isMobile ? "8px" : "16px",
           opacity: active ? "100%" : undefined,
           minWidth: "120px",
