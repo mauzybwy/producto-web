@@ -8,7 +8,7 @@ import ExtensionConfig from "extension/config";
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 /* import { getAnalytics } from "firebase/analytics"; */
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -44,7 +44,16 @@ const browser = ExtensionConfig.browserBase;
 /* const config = require("../../setup/FIREBASE_CONFIG").firebaseConfig; */
 /* firebase.initializeApp(config); */
 
-if (!browser.runtime) {
+var user = null;
+const auth = getAuth();
+const unlisten = onAuthStateChanged(
+  auth,
+  authUser => {
+    user = authUser;
+  },
+);
+
+if (!browser?.runtime) {
   console.log("Browser runtime not found!")
 } else {
   console.log("Browser runtime works!")
@@ -83,6 +92,9 @@ if (!browser.runtime) {
           }
         });      
       return true;
+    } else if (msg.type === "fetchUser") {
+      console.log("USER", user?.uid)
+      sendResponse(user?.uid);
     }
   });
 }

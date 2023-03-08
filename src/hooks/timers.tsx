@@ -11,17 +11,18 @@ import { Timer } from "models/timer";
 /*****************************************************************************
  * Hooks
  *****************************************************************************/
-export const useTimers = () => {
+export const useUserTimers = (uid: string) => {
+  const [userId, setUserId] = useState(uid);
   const [timers, setTimers] = useState<Timer[]>([]);
-  const me = useMe();
   
   useEffect(() => {
-    if (!me) return;
+    if (!uid) return;
+    setUserId(uid);
     
     const unsub = onSnapshot(
       query(
         collection(db, "Timers"),
-        where("owner", "==", me.uid),
+        where("owner", "==", uid),
       ),
       { includeMetadataChanges: true }, 
       (snap) => setTimers(        
@@ -36,7 +37,7 @@ export const useTimers = () => {
     return () => {
       unsub();
     }
-  }, [me]);
+  }, [uid]);
 
   const updateTimer = async (timer: Timer, data: any) => {
     await setDoc(doc(db, "Timers", timer.id), {
@@ -49,7 +50,7 @@ export const useTimers = () => {
     await addDoc(collection(db, "Timers"), {
       name,
       position,
-      owner: me.uid,
+      owner: userId,
       runtime: 0,
       timeCreated: new Date(),
     });
@@ -88,4 +89,9 @@ export const useTimers = () => {
     .sort((a,b) => a.position - b.position)
 
   return { timers, activeTimers, updateTimer, createTimer, clearTimers, saveTimerSessions };
+}
+
+export const useTimers = () => {
+  const me = useMe();
+  return useUserTimers(me?.uid);
 }

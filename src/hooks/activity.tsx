@@ -10,16 +10,17 @@ import { useMe } from "hooks/users";
 /*****************************************************************************
  * Hooks
  *****************************************************************************/
-export const useActivity = () => {
-  const me = useMe();
+export const useUserActivity = (uid: string) => {
+  const [userId, setUserId] = useState(uid);
   const [activity, setActivity] = useState(null);
   
   useEffect(() => {
-    console.log("GOTCHA", me);
-    if (!me) return;
+    if (!uid) return;
+
+    setUserId(uid);
     
     const unsub = onSnapshot(
-      doc(db, "Activity", me?.uid),
+      doc(db, "Activity", uid),
       { includeMetadataChanges: true }, 
       (doc) => {
         setActivity(doc.data());
@@ -29,14 +30,21 @@ export const useActivity = () => {
     return () => {
       unsub();
     }
-  }, [me]);
+  }, [uid]);
 
   const updateActivity = async (data) => {
-    await setDoc(doc(db, "Activity", me?.uid), {
-      ...data,
-      timeUpdated: new Date(),
-    }, { merge: true });
+    if (userId) {
+      await setDoc(doc(db, "Activity", userId), {
+        ...data,
+        timeUpdated: new Date(),
+      }, { merge: true });
+    }
   }
 
   return { activity, updateActivity };
+}
+
+export const useActivity = () => {
+  const me = useMe();
+  return useUserActivity(me?.uid);
 }

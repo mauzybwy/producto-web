@@ -12,12 +12,16 @@ import LoadingAnimation from "components/loading-animation";
 import { useActivity } from "hooks/activity";
 import { useTimers } from "hooks/timers";
 import { useMobileCheck } from "hooks/mobile";
-import { checkIsExtension } from "extension/services/environment-service";
 import colors from "style/colors";
 import { useMe } from "hooks/users";
 import { PageContainer } from "components/containers";
 
+import { checkIsExtension } from "extension/services/environment-service";
+import ExtensionConfig from "extension/config";
+
 import { ChevronLeft, ChevronRight } from "tabler-icons-react";
+
+const browser = ExtensionConfig.browserBase;
 
 /*****************************************************************************
  * Default Component
@@ -81,11 +85,20 @@ export default function ProductoHome () {
     if (activeTimerId) {
       handleClickTimer(activeTimer)
     }
-    navigate("/manage")
+    
+    if (isExtension) {
+      browser.tabs.create({ url: "https://producto-1cba1.web.app/manage" })
+    } else {
+      navigate("/manage")
+    }
   }
 
   const handleClickSessions = () => {
-    navigate("/sessions")
+    if (isExtension) {
+      browser.tabs.create({ url: "https://producto-1cba1.web.app/sessions" })
+    } else {
+      navigate("/manage")
+    }
   }
 
   const handleCountdownFinish = () => {

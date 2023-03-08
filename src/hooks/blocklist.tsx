@@ -11,8 +11,7 @@ import { Blocked } from "models/blocked";
 /*****************************************************************************
  * Hooks
  *****************************************************************************/
-export const useBlocklist = () => {
-  const me = useMe();
+export const useUserBlocklist = (uid: string) => {
   const [blocklist, setBlocklist] = useState<Blocked[]>([])
   
   useEffect(() => {
@@ -33,4 +32,9 @@ export const useBlocklist = () => {
   }, []);
 
   return { blocklist };
+}
+
+export const useBlocklist = () => {
+  const me = useMe();
+  return useUserBlocklist(me?.uid)
 }

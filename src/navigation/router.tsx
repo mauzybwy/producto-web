@@ -43,6 +43,10 @@ export default function ProductoRouter() {
                 element={<ProductoHome />}
               />
               <Route
+                path="/extension.html"
+                element={<ProductoHome />}
+              />
+              <Route
                 path="/sessions"
                 element={<SessionsScreen />}
               />

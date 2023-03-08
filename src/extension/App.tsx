@@ -4,6 +4,7 @@
 import { useEffect } from "react";
 import { ThemeProvider } from "@mui/material/styles";
 
+import ProductoRouter from "../navigation/router";
 import { useMe } from "hooks/users";
 import { theme } from "style/theme";
 import ProductoHome from "screens/home";
@@ -22,11 +23,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <div style={{ width: "432px", height: "500px" }}>
-        {me?.uid ? (
-          <ProductoHome />
-        ) : (
-          <LoginScreen />
-        )}
+        <ProductoRouter />
       </div>
     </ThemeProvider>
   );

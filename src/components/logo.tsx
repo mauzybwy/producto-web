@@ -5,11 +5,24 @@ import { Box, Typography } from "@mui/material";
 import colors from "style/colors";
 import { useNavigate } from "react-router-dom";
 
+import { checkIsExtension } from "../extension/services/environment-service";
+import ExtensionConfig from "extension/config";
+
+const browser = ExtensionConfig.browserBase;
+
 /*****************************************************************************
  * Default Component
  *****************************************************************************/
 export default function Logo () {
   const navigate = useNavigate();
+
+  const handleClick = () => {
+    if (checkIsExtension()) {
+      browser.tabs.create({ url: "https://producto-1cba1.web.app/" })
+    } else {
+      navigate("/")
+    }
+  }
   
   return (
     <Box
@@ -20,7 +33,7 @@ export default function Logo () {
         width: "32px",
         backgroundColor: colors.accent,
       }}
-      onClick={() => navigate("/")}
+      onClick={handleClick}
       className="interact"
     >
       <Typography

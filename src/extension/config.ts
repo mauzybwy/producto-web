@@ -1,4 +1,4 @@
-import { checkIsExtension } from "./services/environment-service";
+import { checkIsExtension, extensionKind } from "./services/environment-service";
 
 let ExtensionConfig = {
   browser: undefined,
@@ -7,11 +7,11 @@ let ExtensionConfig = {
 }
 
 if (checkIsExtension()) {
-  const EXTENSION_KIND = "firefox"; //  "firefox"; //
+  const EXTENSION_KIND = extensionKind();
   const EXTENSION_ID =
     //@ts-ignore
     EXTENSION_KIND === "firefox"
-    ? "8eb2c43d05b13d3764b2733dd118a833e5c86d4d@temporary-addon"
+    ? "f48e108e1d643931e99afb31bbd70b4a5f9bd739"
     : "jlocmelkpbekapkplfohppkmolgcfgcc";
 
   //@ts-ignore
