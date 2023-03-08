@@ -15,14 +15,16 @@ export const PageContainer = ({ children, style } : { children: any, style?: any
   
   return (
     <Box
-      pt={(isMobile && !isExtension) ? "96px" : isExtension ? "16px" : undefined}
-      pb={isExtension ? "16px" : undefined}
+      pt={(isMobile && !isExtension) ? "96px" : isExtension ? "16px" : "64px"}
+      //pb={isExtension ? "16px" : undefined}
       width={isMobile ? "100%" : "100vw"}
-      height={isMobile ? "100%" : "100vh"}
+      height={isMobile ? "100%" : "calc(100vh - 96px)"}
       display="flex"
       justifyContent="center"
       alignItems="center"
-      style={style}
+      style={{
+        ...style,
+      }}
     >
       { children }
     </Box>

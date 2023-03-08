@@ -15,6 +15,8 @@ import { useMe } from "hooks/users";
 
 /* Pages */
 import ProductoHome from "screens/home";
+import SessionsScreen from "screens/sessions";
+import ManageScreen from "screens/manage";
 import LoginScreen from "screens/login/login";
 import StyleGuide from "screens/style-guide"
 import PageNotFound from "screens/page-not-found";
@@ -40,7 +42,14 @@ export default function ProductoRouter() {
                 index
                 element={<ProductoHome />}
               />
-
+              <Route
+                path="/sessions"
+                element={<SessionsScreen />}
+              />
+              <Route
+                path="/manage"
+                element={<ManageScreen />}
+              />
               <Route
                 path="/style"
                 element={<StyleGuide />}
