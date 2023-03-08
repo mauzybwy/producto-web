@@ -45,11 +45,13 @@ export const useTimers = () => {
     }, { merge: true });
   }
 
-  const createTimer = async (name: string) => {
+  const createTimer = async (name: string, position: number) => {
     await addDoc(collection(db, "Timers"), {
       name,
+      position,
       owner: me.uid,
       runtime: 0,
+      timeCreated: new Date(),
     });
   }
 
@@ -81,5 +83,9 @@ export const useTimers = () => {
     }
   }
 
-  return { timers, updateTimer, createTimer, clearTimers, saveTimerSessions };
+  const activeTimers = timers
+    .filter(timer => timer.position > 0)
+    .sort((a,b) => a.position - b.position)
+
+  return { timers, activeTimers, updateTimer, createTimer, clearTimers, saveTimerSessions };
 }

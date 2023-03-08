@@ -28,7 +28,7 @@ export default function ProductoHome () {
   const isMobile = useMobileCheck();
   const navigate = useNavigate();
   const { activity, updateActivity } = useActivity();
-  const { timers, updateTimer, clearTimers, saveTimerSessions } = useTimers();
+  const { activeTimers, updateTimer, clearTimers, saveTimerSessions } = useTimers();
   const [loading, setLoading] = useState(true);
   const countdownTime = activity?.countdownTime || 900;
   const countDown = !!activity?.countDown;
@@ -41,8 +41,8 @@ export default function ProductoHome () {
 
   const [activeTimerId, setActiveTimerId] = useState(null);
 
-  const totalTime = timers.reduce((accum, timer) => accum + timer.runtime, 0);
-  const activeTimer = timers.find(timer => timer.id === activeTimerId);
+  const totalTime = activeTimers.reduce((accum, timer) => accum + timer.runtime, 0);
+  const activeTimer = activeTimers.find(timer => timer.id === activeTimerId);
 
   const handleClickTimer = async (timer: Timer) => {
     updateActiveTimer();
@@ -202,7 +202,7 @@ export default function ProductoHome () {
         <Box /> {/* GAP */}
         <TimerButtons
           disable={activeTimerId && countDown}
-          timers={timers}
+          timers={activeTimers}
           activeTimerId={activeTimerId}
           onClickTimer={handleClickTimer}
         />

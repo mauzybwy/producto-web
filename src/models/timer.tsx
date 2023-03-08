@@ -6,6 +6,7 @@ interface TimerSession {
 
 export interface Timer {
   name: string;
+  position: number;
   runtime: number;
   id?: string;
   //active: boolean;
