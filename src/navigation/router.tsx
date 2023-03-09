@@ -17,6 +17,7 @@ import { useMe } from "hooks/users";
 import ProductoHome from "screens/home";
 import SessionsScreen from "screens/sessions";
 import ManageScreen from "screens/manage";
+import BlocklistScreen from "screens/blocklist";
 import LoginScreen from "screens/login/login";
 import StyleGuide from "screens/style-guide"
 import PageNotFound from "screens/page-not-found";
@@ -45,6 +46,10 @@ export default function ProductoRouter() {
               <Route
                 path="/extension.html"
                 element={<ProductoHome />}
+              />
+              <Route
+                path="/blocklist"
+                element={<BlocklistScreen />}
               />
               <Route
                 path="/sessions"

@@ -27,7 +27,7 @@ export default function ExtensionOverlay () {
   
   const { activity } = useUserActivity(uid);
   const { blocklist } = useUserBlocklist(uid);
-  const blocked = blocklist.find(block => window.location.hostname.includes(block.url));
+  const blocked = blocklist.find(url => window.location.hostname.includes(url));
 
   console.log("overlay", activity, blocklist);
 

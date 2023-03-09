@@ -97,7 +97,15 @@ export default function ProductoHome () {
     if (isExtension) {
       browser.tabs.create({ url: "https://producto-1cba1.web.app/sessions" })
     } else {
-      navigate("/manage")
+      navigate("/sessions")
+    }
+  }
+
+  const handleClickBlocklist = () => {
+    if (isExtension) {
+      browser.tabs.create({ url: "https://producto-1cba1.web.app/blocklist" })
+    } else {
+      navigate("/blocklist")
     }
   }
 
@@ -114,7 +122,7 @@ export default function ProductoHome () {
   }, [activity])
 
   useEffect(() => {
-    if (activeTimer && activeTimer.timeStarted === null) {
+    if (activeTimer && !activeTimer.timeStarted) {
       updateTimer(activeTimer, {
         timeStarted: activeTimer.timeStarted || new Date(),
       })
@@ -227,6 +235,10 @@ export default function ProductoHome () {
           <UnderlinedButton
             onClick={handleClickSessions}
             text="sessions"
+          />
+          <UnderlinedButton
+            onClick={handleClickBlocklist}
+            text="blocklist"
           />
         </Box>
       </Box>

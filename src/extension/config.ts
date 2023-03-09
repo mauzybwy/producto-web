@@ -12,7 +12,7 @@ if (checkIsExtension()) {
     //@ts-ignore
     EXTENSION_KIND === "firefox"
     ? "f48e108e1d643931e99afb31bbd70b4a5f9bd739"
-    : "jlocmelkpbekapkplfohppkmolgcfgcc";
+    : "oppdllnncifpmiccodickkcihiielbpn";
 
   //@ts-ignore
   let BROWSER_BASE = EXTENSION_KIND === "firefox" ? browser : chrome;

@@ -16,7 +16,6 @@ export const useMe = () => {
     const auth = getAuth();
     const unlisten = onAuthStateChanged(auth,
       authUser => {
-        console.log(authUser)
         authUser
         ? setMe(authUser)
         : setMe(null);

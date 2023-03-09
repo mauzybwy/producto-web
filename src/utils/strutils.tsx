@@ -8,3 +8,5 @@ export const toTimestring = (num) => {
   var timeString = date.toISOString().substring(11, 19);
   return timeString;
 }
+
+export const strippedUrl = url => url.toLowerCase().replace(/(^\w+:|^)\/\//, '');

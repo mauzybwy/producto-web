@@ -16,7 +16,6 @@ export const useUserActivity = (uid: string) => {
   
   useEffect(() => {
     if (!uid) return;
-
     setUserId(uid);
     
     const unsub = onSnapshot(
