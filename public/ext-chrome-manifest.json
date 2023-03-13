@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "producto",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "description": "track em, block em, stick em in a stew",
     "action": {
         "default_popup": "extension.html",
