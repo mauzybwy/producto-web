@@ -15,7 +15,7 @@ export const PageContainer = ({ children, style } : { children: any, style?: any
   
   return (
     <Box
-      pt={(isMobile && !isExtension) ? "96px" : isExtension ? "32px" : "64px"}
+      pt={(isMobile && !isExtension) ? "96px" : isExtension ? "64px" : "64px"}
       //pb={isExtension ? "16px" : undefined}
       width={isMobile ? "100%" : "100vw"}
       height={isMobile ? "100%" : "calc(100vh - 96px)"}
