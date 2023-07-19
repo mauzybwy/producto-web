@@ -50,4 +50,15 @@ export const theme = createTheme({
       lineHeight: undefined,
     },
   },
+
+  components: {
+    'MuiCheckbox': {
+      defaultProps: {
+        /* labelStyle: { color: 'white' }, */
+        /* iconStyle: { fill: 'white' }, */
+        /* inputStyle: { color:'white' }, */
+        style: { color: "white", padding: 0 },
+      }
+    },
+  },
 });

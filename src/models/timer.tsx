@@ -4,6 +4,14 @@ interface TimerSession {
   runtime: number;
 }
 
+interface PayPeriod {
+  hourly: number;
+}
+
+interface PayPeriodMap {
+  [key: string]: PayPeriod;
+};
+
 export interface Timer {
   name: string;
   position: number;
@@ -14,4 +22,5 @@ export interface Timer {
   timeStarted: Date;
   timeUpdated: Date;
   sessions: TimerSession[];
+  payPeriods: PayPeriodMap;
 }

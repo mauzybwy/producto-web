@@ -2,8 +2,9 @@
  * Import
  *****************************************************************************/
 import { useEffect, useState } from "react";
-import { doc, where, addDoc, setDoc, collection, query, onSnapshot } from "firebase/firestore";
+import { doc, where, addDoc, setDoc, updateDoc, collection, query, onSnapshot, writeBatch } from "firebase/firestore";
 import { db } from "setup/firebase";
+import { v4 as uuidv4 } from "uuid";
 
 import { useMe } from "hooks/users";
 import { Timer } from "models/timer";
@@ -14,7 +15,13 @@ import { Timer } from "models/timer";
 export const useUserTimers = (uid: string) => {
   const [userId, setUserId] = useState(uid);
   const [timers, setTimers] = useState<Timer[]>([]);
-  
+
+  /* useEffect(() => {
+   *   if (timers?.sessions?.length) {
+   *     
+   *   }
+   * }, [timers.sessions])
+   *  */
   useEffect(() => {
     if (!uid) return;
     setUserId(uid);
@@ -84,11 +91,31 @@ export const useUserTimers = (uid: string) => {
     }
   }
 
+  const createPayPeriod = async (timer: Timer, hourly: number) => {
+    const uuid = uuidv4();
+
+    const newSessions = [...(timer?.sessions || [])].map(() => {
+      
+    })
+
+    updateDoc(doc(db, "Timers", timer.id), {
+      payPeriods: {
+        ...(timer.payPeriods || {}),
+        [uuid]: {
+          hourly: hourly,
+          status: "unpaid",
+        }
+      }
+    });
+
+    return uuid;
+  }
+
   const activeTimers = timers
     .filter(timer => timer.position > 0)
     .sort((a,b) => a.position - b.position)
 
-  return { timers, activeTimers, updateTimer, createTimer, clearTimers, saveTimerSessions };
+  return { timers, activeTimers, updateTimer, createTimer, clearTimers, saveTimerSessions, createPayPeriod };
 }
 
 export const useTimers = () => {
